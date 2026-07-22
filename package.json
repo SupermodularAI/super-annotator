@@ -1,0 +1,38 @@
+{
+  "name": "super-annotator",
+  "version": "1.0.0",
+  "description": "Click-to-annotate overlay for any HTML page — leave inline notes, export them as markdown, paste straight into your AI's next prompt.",
+  "bin": {
+    "super-annotator": "./inject-annotate.js"
+  },
+  "files": [
+    "annotator.js",
+    "inject-annotate.js",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test annotator.test.js",
+    "test:e2e": "npx playwright test annotator.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  },
+  "keywords": [
+    "annotation",
+    "feedback",
+    "html",
+    "review",
+    "prototype",
+    "claude-code",
+    "ai"
+  ],
+  "license": "MIT",
+  "author": "Supermodular.ai (https://supermodular.ai)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/supermodularai/super-annotator"
+  },
+  "homepage": "https://github.com/supermodularai/super-annotator"
+}
