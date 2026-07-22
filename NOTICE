@@ -1,0 +1,8 @@
+super-annotator
+Copyright 2026 supermodular.ai GmbH
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product has no bundled third-party runtime dependencies. Development-only
+tooling (e.g. @playwright/test) is distributed under its own license via npm
+and is not included in published artifacts.

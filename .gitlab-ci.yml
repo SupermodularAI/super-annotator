@@ -1,0 +1,56 @@
+# =============================================================================
+# super-annotator CI: scan-and-sync to GitHub for open-sourcing.
+#
+# Includes the shared OSS template. Security/compliance stages run as a gate on
+# every push to main and on merge requests; the final GitHub sync is a MANUAL
+# job you trigger from the pipeline UI once the gates are green.
+#
+# Prerequisites (see ci-templates/README.md):
+#   - GitHub App installed on SupermodularAI with Contents: read & write on
+#     super-annotator, exposed to CI as these variables:
+#       GITHUB_APP_ID                (masked)
+#       GITHUB_APP_INSTALLATION_ID   (masked)
+#       GITHUB_APP_PRIVATE_KEY       (File type; the .pem contents)
+#     OR a static GITHUB_TOKEN (fine-grained PAT with Contents: read & write).
+#   - The target GitHub repo SupermodularAI/super-annotator exists (empty is fine).
+# =============================================================================
+
+include:
+  - project: 'supermodularai/core/devex/ci-templates'
+    ref: v1.2.0                    # pinned to a tag; bump deliberately
+    file: 'oss-sync.yml'
+
+variables:
+  GITHUB_REPO: "SupermodularAI/super-annotator"
+  SYNC_BRANCHES: "main"
+  SYNC_TAGS: "true"
+
+  # Gate policy (defaults shown; uncomment to override):
+  # FAIL_ON_SECRETS: "true"
+  # FAIL_ON_HIGH_SEVERITY: "true"
+  # FAIL_ON_DISALLOWED_LICENSE: "true"
+  # FAIL_ON_MISSING_PROJECT_LICENSE: "true"
+  # REQUIRED_LICENSE: "Apache-2.0"
+  # TRIVY_SEVERITY: "HIGH,CRITICAL"
+  # DISALLOWED_LICENSES: "GPL-2.0,GPL-3.0,AGPL-3.0"
+
+# Run the scan gate on pushes to main and on merge requests.
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+secret-scan:
+  extends: .secret-scan
+
+sast:
+  extends: .sast
+
+deps:
+  extends: .deps
+
+license:
+  extends: .license
+
+sync:
+  extends: .sync-to-github

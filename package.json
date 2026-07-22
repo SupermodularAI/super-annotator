@@ -28,7 +28,7 @@
     "claude-code",
     "ai"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Supermodular.ai (https://supermodular.ai)",
   "repository": {
     "type": "git",
