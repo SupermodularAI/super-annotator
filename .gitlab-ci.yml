@@ -17,7 +17,7 @@
 
 include:
   - project: 'supermodularai/core/devex/ci-templates'
-    ref: v1.2.0                    # pinned to a tag; bump deliberately
+    ref: v1.3.0                    # pinned to a tag; bump deliberately
     file: 'oss-sync.yml'
 
 variables:
