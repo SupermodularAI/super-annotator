@@ -92,6 +92,10 @@ npm test           # unit tests
 npm run test:e2e   # Playwright end-to-end tests
 ```
 
+## Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](./LICENSE).
