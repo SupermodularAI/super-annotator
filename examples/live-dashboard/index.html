@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halyard · Revenue overview</title>
+<style>
+  /* Brand fonts are served by the relay from a local superbrand clone
+     (--fonts). When they are missing the page falls back to system fonts. */
+  @font-face { font-family: 'Denim INK'; src: url('/fonts/Denim%20INK/DenimINK-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'Denim INK'; src: url('/fonts/Denim%20INK/DenimINK-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+  @font-face { font-family: 'Aeonik Fono'; src: url('/fonts/Aeonik%20Fono/aeonikfono-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'Aeonik Fono'; src: url('/fonts/Aeonik%20Fono/aeonikfono-semibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+
+  /* /superbrand tokens (tokens.json): true-black neutrals, brand-200 primary. */
+  :root {
+    --primary: #f6ff9a; --primary-foreground: #000000;
+    --bg: #000000; --card: #191919; --border: #2d2d2d; --border-strong: #3c3c3c;
+    --text: #ffffff; --text-2: #f2f2f2; --muted: #c2c2c2; --subtle: #6b6b6b;
+    --success: #64de3c; --success-200: #b8ff9f;
+    --destructive: #f04758; --destructive-200: #fe9da7;
+    --warning: #ffa903; --warning-200: #ffdd9a;
+    --sans: 'Denim INK', -apple-system, system-ui, 'Segoe UI', sans-serif;
+    --mono: 'Aeonik Fono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --r-control: 16px; --r-card: 24px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; }
+
+  .shell { max-width: 1180px; padding: 28px 32px 64px; transition: padding-right .2s ease; }
+  /* Leave the right margin free for comment cards while annotate is open. */
+  body:not(.annot-ui-collapsed):not(.annot-ui-hidden):not(.annot-compact) .shell { padding-right: 320px; max-width: 1480px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+  .brand-mark { width: 22px; height: 22px; border-radius: 7px; background: var(--primary); display: grid; place-items: center; }
+  .brand-mark span { width: 8px; height: 8px; border-radius: 2px; background: #000; }
+  .nav { display: flex; gap: 4px; }
+  .nav a { color: var(--muted); text-decoration: none; font-size: 14px; padding: 8px 14px; border-radius: var(--r-control); }
+  .nav a[aria-current="page"] { color: var(--text); background: var(--card); }
+  .user { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 32px 0 24px; flex-wrap: wrap; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  h1 { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; margin: 8px 0 0; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-control); padding: 3px; background: var(--card); }
+  .seg button { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 7px 12px; border-radius: 13px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--bg); color: var(--text); }
+  .btn { font: inherit; font-size: 13px; font-weight: 600; border-radius: var(--r-control); padding: 10px 16px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-card); padding: 20px 22px; }
+  .kpi-label { font-size: 13px; color: var(--muted); }
+  .kpi-value { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 10px 0 8px; font-variant-numeric: tabular-nums; }
+  .kpi-foot { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .delta { padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .delta.up { color: var(--success-200); background: rgba(100,222,60,.12); }
+  .delta.down-good { color: var(--success-200); background: rgba(100,222,60,.12); }
+
+  .charts { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .card-title { font-size: 15px; font-weight: 600; margin: 0; }
+  .card-sub { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  svg text { font-family: var(--mono); fill: var(--muted); font-size: 11px; }
+  .chart { width: 100%; height: auto; display: block; }
+
+  .activity { margin-top: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-weight: 400; font-family: var(--mono); font-size: 12px; color: var(--muted); padding: 0 12px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 13px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.mono { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .acct { font-weight: 600; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+  .badge.completed { color: var(--success-200); background: rgba(100,222,60,.12); }
+  .badge.pending { color: var(--warning-200); background: rgba(255,169,3,.12); }
+  .badge.failed { color: var(--destructive-200); background: rgba(240,71,88,.12); }
+
+  .demo-note { margin-top: 28px; font-family: var(--mono); font-size: 12px; color: var(--subtle); }
+
+  @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .charts { grid-template-columns: 1fr; } }
+  /* Phones: one column, the table scrolls sideways inside its card, and the
+     overlay shows pins only (comment threads open full screen). */
+  @media (max-width: 640px) {
+    .shell { padding: 16px 16px 48px; }
+    .topbar { flex-wrap: wrap; gap: 10px; padding-bottom: 16px; }
+    .nav { order: 3; width: 100%; overflow-x: auto; }
+    .nav a { padding: 8px 12px; white-space: nowrap; }
+    .head { margin: 20px 0 16px; align-items: flex-start; }
+    h1 { font-size: 28px; }
+    .controls { flex-wrap: wrap; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .card { padding: 16px; border-radius: 20px; }
+    .kpi-value { font-size: 24px; }
+    .kpi-foot { flex-wrap: wrap; gap: 6px; }
+    .activity { overflow-x: auto; }
+    table { min-width: 560px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark"><span></span></div>Halyard</div>
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-current="page">Revenue</a>
+      <a href="#">Accounts</a>
+      <a href="#">Pipeline</a>
+      <a href="#">Reports</a>
+    </nav>
+    <div class="user">Workspace: Halyard Demo</div>
+  </header>
+
+  <div class="head">
+    <div>
+      <div class="eyebrow">Revenue · updated 6 minutes ago</div>
+      <h1 id="page-title">Revenue overview</h1>
+    </div>
+    <div class="controls">
+      <div class="seg" id="range-filter" role="group" aria-label="Date range">
+        <button type="button">30 days</button>
+        <button type="button">Quarter</button>
+        <button type="button" aria-pressed="true">12 months</button>
+      </div>
+      <button class="btn btn-primary" id="export-report" type="button">Export report</button>
+    </div>
+  </div>
+
+  <section class="kpis" aria-label="Key metrics">
+    <article class="card" id="kpi-mrr">
+      <div class="kpi-label">Monthly recurring revenue</div>
+      <div class="kpi-value">€184.3k</div>
+      <div class="kpi-foot"><span class="delta up">+4.1%</span> vs last month</div>
+    </article>
+    <article class="card" id="kpi-accounts">
+      <div class="kpi-label">Active accounts</div>
+      <div class="kpi-value">2,418</div>
+      <div class="kpi-foot"><span class="delta up">+6.2%</span> vs last month</div>
+    </article>
+    <article class="card" id="kpi-nrr">
+      <div class="kpi-label">Net revenue retention</div>
+      <div class="kpi-value">112%</div>
+      <div class="kpi-foot"><span class="delta up">+3 pts</span> trailing 12 months</div>
+    </article>
+    <article class="card" id="kpi-churn">
+      <div class="kpi-label">Logo churn</div>
+      <div class="kpi-value">1.8%</div>
+      <div class="kpi-foot"><span class="delta down-good">-0.4 pts</span> vs last month</div>
+    </article>
+  </section>
+
+  <section class="charts">
+    <article class="card" id="chart-mrr">
+      <div class="card-head">
+        <h2 class="card-title">MRR, last 12 months</h2>
+        <span class="card-sub">€k, end of month</span>
+      </div>
+      <svg class="chart" id="mrr-svg" viewBox="0 0 640 240" role="img" aria-label="MRR line chart, rising from 128k to 184k"></svg>
+    </article>
+    <article class="card" id="chart-channels">
+      <div class="card-head">
+        <h2 class="card-title">New accounts by channel</h2>
+        <span class="card-sub">last 90 days</span>
+      </div>
+      <svg class="chart" id="channel-svg" viewBox="0 0 380 240" role="img" aria-label="Bar chart of new accounts by acquisition channel"></svg>
+    </article>
+  </section>
+
+  <section class="card activity" id="activity-table">
+    <div class="card-head">
+      <h2 class="card-title">Recent account activity</h2>
+      <span class="card-sub">8 most recent events</span>
+    </div>
+    <table>
+      <thead><tr><th>Account</th><th>Event</th><th>Plan</th><th class="num">MRR change</th><th>When</th><th>Status</th></tr></thead>
+      <tbody id="activity-rows"></tbody>
+    </table>
+  </section>
+
+  <p class="demo-note">Fictional company and data. Open this page in two windows and comment in one: it appears in the other.</p>
+</div>
+
+<script>
+  /* ── mock data ───────────────────────────────────────────────────── */
+  const MRR = [128.4, 132.9, 137.1, 141.8, 146.0, 151.2, 157.9, 163.4, 158.1, 167.5, 177.0, 184.3];
+  const MONTHS = ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+  const CHANNELS = [['Organic', 312], ['Partner', 296], ['Referral', 188], ['Paid', 141], ['Events', 64]];
+  const ACTIVITY = [
+    { id: 'ac-2291', account: 'Harbor Lane', event: 'Downgraded', plan: 'Scale to Team', mrr: -1240, when: '12 min ago', status: 'Completed' },
+    { id: 'ac-2288', account: 'Quillfeather Studio', event: 'Seat expansion', plan: 'Team', mrr: 360, when: '48 min ago', status: 'Completed' },
+    { id: 'ac-2286', account: 'Northgate Logistics', event: 'New account', plan: 'Scale', mrr: 2900, when: '2 h ago', status: 'Completed' },
+    { id: 'ac-2281', account: 'Pinecrest Dental', event: 'Payment failed', plan: 'Starter', mrr: -89, when: '3 h ago', status: 'Failed' },
+    { id: 'ac-2279', account: 'Vesper Robotics', event: 'Upgraded', plan: 'Team to Scale', mrr: 1650, when: '5 h ago', status: 'Completed' },
+    { id: 'ac-2274', account: 'Odalys Foods', event: 'Renewal due', plan: 'Enterprise', mrr: 0, when: 'Yesterday', status: 'Pending' },
+    { id: 'ac-2270', account: 'Brightwater Labs', event: 'New account', plan: 'Team', mrr: 720, when: 'Yesterday', status: 'Completed' },
+    { id: 'ac-2266', account: 'Kestrel Legal', event: 'Seat expansion', plan: 'Scale', mrr: 480, when: '2 days ago', status: 'Pending' },
+  ];
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, text) => { const n = document.createElementNS(NS, tag); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); if (text != null) n.textContent = text; return n; };
+
+  (function lineChart() {
+    const svg = document.getElementById('mrr-svg');
+    const W = 640, H = 240, L = 44, R = 12, T = 12, B = 28;
+    const min = 120, max = 190;
+    const x = i => L + (i * (W - L - R)) / (MRR.length - 1);
+    const y = v => T + (1 - (v - min) / (max - min)) * (H - T - B);
+    [120, 140, 160, 180].forEach(v => {
+      svg.appendChild(el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: '#2d2d2d', 'stroke-width': 1 }));
+      svg.appendChild(el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end' }, v));
+    });
+    MONTHS.forEach((m, i) => { if (i % 2 === 1 || i === MONTHS.length - 1) svg.appendChild(el('text', { x: x(i), y: H - 8, 'text-anchor': 'middle' }, m)); });
+    svg.appendChild(el('polyline', { points: MRR.map((v, i) => `${x(i)},${y(v)}`).join(' '), fill: 'none', stroke: '#f6ff9a', 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+    const last = MRR.length - 1;
+    svg.appendChild(el('circle', { cx: x(last), cy: y(MRR[last]), r: 4.5, fill: '#f6ff9a' }));
+    svg.appendChild(el('text', { x: x(last) - 8, y: y(MRR[last]) - 10, 'text-anchor': 'end', style: 'fill:#ffffff;font-weight:600' }, '184.3'));
+  })();
+
+  (function barChart() {
+    const svg = document.getElementById('channel-svg');
+    const W = 380, L = 78, R = 44, rowH = 40, top = 14, maxV = 340;
+    CHANNELS.forEach(([name, v], i) => {
+      const yy = top + i * rowH;
+      const w = ((W - L - R) * v) / maxV;
+      svg.appendChild(el('text', { x: L - 10, y: yy + 17, 'text-anchor': 'end' }, name));
+      svg.appendChild(el('rect', { x: L, y: yy + 4, width: w, height: 18, rx: 6, fill: i === 0 ? '#f6ff9a' : '#3c3c3c' }));
+      svg.appendChild(el('text', { x: L + w + 8, y: yy + 17, style: 'fill:#f2f2f2' }, v));
+    });
+  })();
+
+  (function table() {
+    const body = document.getElementById('activity-rows');
+    const fmt = n => (n === 0 ? '€0' : (n > 0 ? '+' : '-') + '€' + Math.abs(n).toLocaleString('en-US'));
+    ACTIVITY.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.id = 'row-' + r.id;
+      tr.innerHTML = `<td><span class="acct"></span></td><td></td><td></td><td class="num"></td><td class="mono"></td><td><span class="badge ${r.status.toLowerCase()}"></span></td>`;
+      const tds = tr.querySelectorAll('td');
+      tds[0].firstChild.textContent = r.account;
+      tds[1].textContent = r.event;
+      tds[2].textContent = r.plan;
+      tds[3].textContent = fmt(r.mrr);
+      tds[4].textContent = r.when;
+      tds[5].firstChild.textContent = r.status;
+      body.appendChild(tr);
+    });
+  })();
+
+  document.querySelectorAll('#range-filter button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#range-filter button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+</script>
+
+<script>
+  /* Multiplayer annotate: live comments through the local relay. */
+  window.SM_ARTEFACT_NAME = 'Halyard revenue dashboard';
+  if (location.host) {
+    window.SM_ANNOTATE_SYNC = {
+      url: (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/sync',
+      // ?room=<name> opens a separate, empty room (handy for testing).
+      room: new URLSearchParams(location.search).get('room') || 'halyard-revenue-dashboard',
+    };
+  }
+</script>
+<!-- The relay inlines the current annotator.js between these markers. -->
+<!-- annotate:v1 START -->
+<!-- annotate:v1 END -->
+</body>
+</html>

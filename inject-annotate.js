@@ -12,6 +12,8 @@
  *   --name=<string>      window.SM_ARTEFACT_NAME — display name shown in exports
  *   --reviewer=<string>  window.SM_REVIEWER_NAME — pre-fill reviewer name
  *   --plugin             window.SM_ANNOTATE_PLUGIN = true — ship dormant, activate via ?=annotate
+ *   --sync=<ws(s)://…>   window.SM_ANNOTATE_SYNC.url — live multiplayer through a relay (see relay/)
+ *   --room=<string>      window.SM_ANNOTATE_SYNC.room — who shares comments (default: the file name)
  *   --recursive          scan directories recursively (default: one level deep)
  *
  * Re-running on an already-injected file refreshes the block in place (same
@@ -33,6 +35,8 @@ function parseArgs(argv) {
     else if (arg.startsWith('--key=')) opts.key = arg.slice(6);
     else if (arg.startsWith('--name=')) opts.name = arg.slice(7);
     else if (arg.startsWith('--reviewer=')) opts.reviewer = arg.slice(11);
+    else if (arg.startsWith('--sync=')) opts.sync = arg.slice(7);
+    else if (arg.startsWith('--room=')) opts.room = arg.slice(7);
     else if (!arg.startsWith('--')) opts.target = arg;
   }
   return opts;
@@ -60,12 +64,16 @@ function findHtmlFiles(target, recursive) {
   return results;
 }
 
-function buildBlock(annotatorSrc, opts) {
+function buildBlock(annotatorSrc, opts, filePath) {
   const overrides = [];
   if (opts.key) overrides.push(`window.SM_ARTEFACT_KEY = ${JSON.stringify(opts.key)};`);
   if (opts.name) overrides.push(`window.SM_ARTEFACT_NAME = ${JSON.stringify(opts.name)};`);
   if (opts.reviewer) overrides.push(`window.SM_REVIEWER_NAME = ${JSON.stringify(opts.reviewer)};`);
   if (opts.plugin) overrides.push(`window.SM_ANNOTATE_PLUGIN = true;`);
+  if (opts.sync) {
+    const room = opts.room || path.basename(filePath || 'page', '.html');
+    overrides.push(`window.SM_ANNOTATE_SYNC = ${JSON.stringify({ url: opts.sync, room })};`);
+  }
 
   const overrideBlock = overrides.length
     ? `<script>\n${overrides.map((l) => '  ' + l).join('\n')}\n</script>\n`
@@ -98,7 +106,7 @@ function injectInto(filePath, block) {
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   if (!opts.target) {
-    console.error('Usage: node inject-annotate.js <file-or-directory> [--key=] [--name=] [--reviewer=] [--plugin] [--recursive]');
+    console.error('Usage: node inject-annotate.js <file-or-directory> [--key=] [--name=] [--reviewer=] [--plugin] [--sync=] [--room=] [--recursive]');
     process.exit(1);
   }
 
@@ -108,7 +116,6 @@ function main() {
     process.exit(1);
   }
   const annotatorSrc = fs.readFileSync(annotatorPath, 'utf8');
-  const block = buildBlock(annotatorSrc, opts);
 
   const files = findHtmlFiles(opts.target, opts.recursive);
   if (!files.length) {
@@ -117,7 +124,7 @@ function main() {
   }
 
   for (const file of files) {
-    const { status } = injectInto(file, block);
+    const { status } = injectInto(file, buildBlock(annotatorSrc, opts, file));
     console.log(`${status.padEnd(28)} ${file}`);
   }
 }
