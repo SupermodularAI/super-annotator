@@ -354,7 +354,7 @@ describe('resolveSyncAdapter', () => {
     assert.equal(resolveSyncAdapter({ url: 'javascript:alert(1)' }, {}), null);
   });
   it('builds the websocket adapter from a ws url, with a default room', () => {
-    const r = resolveSyncAdapter({ url: 'ws://localhost:4620/sync', WebSocket: FakeWS }, { defaultRoom: '/deck/index.html' });
+    const r = resolveSyncAdapter({ url: 'wss://localhost:4620/sync', WebSocket: FakeWS }, { defaultRoom: '/deck/index.html' });
     assert.equal(r.adapter.kind, 'websocket');
     assert.equal(r.room, '/deck/index.html');
   });
@@ -372,7 +372,7 @@ describe('createWebSocketAdapter', () => {
   it('queues ops while connecting, then sends join, hello, queue in order', () => {
     FakeWS.instances = [];
     const statuses = [];
-    const a = createWebSocketAdapter({ url: 'ws://x/sync', room: 'r1', WebSocket: FakeWS });
+    const a = createWebSocketAdapter({ url: 'wss://x/sync', room: 'r1', WebSocket: FakeWS });
     a.connect({ onStatus: s => statuses.push(s), onMessage() {} });
     a.identify({ userId: 'u1', name: 'Ana' });
     a.send({ type: 'note.add', note: { id: 'n1' } });
@@ -381,7 +381,7 @@ describe('createWebSocketAdapter', () => {
     assert.deepEqual(ws.sent, []);
     ws._open();
     assert.deepEqual(ws.sent.map(m => m.type), ['join', 'hello', 'note.add']);
-    assert.equal(ws.url, 'ws://x/sync?room=r1');
+    assert.equal(ws.url, 'wss://x/sync?room=r1');
     assert.equal(ws.sent[0].room, 'r1');
     assert.deepEqual(statuses, ['connecting', 'live']);
     a.close();
@@ -389,7 +389,7 @@ describe('createWebSocketAdapter', () => {
   it('delivers parsed messages and ignores junk', () => {
     FakeWS.instances = [];
     const got = [];
-    const a = createWebSocketAdapter({ url: 'ws://x/sync', room: 'r', WebSocket: FakeWS });
+    const a = createWebSocketAdapter({ url: 'wss://x/sync', room: 'r', WebSocket: FakeWS });
     a.connect({ onMessage: m => got.push(m) });
     const ws = FakeWS.instances[0];
     ws._open();
@@ -401,7 +401,7 @@ describe('createWebSocketAdapter', () => {
   it('reconnects after a drop and re-sends hello; close() stops retrying', async () => {
     FakeWS.instances = [];
     const statuses = [];
-    const a = createWebSocketAdapter({ url: 'ws://x/sync', room: 'r', WebSocket: FakeWS, reconnectMs: 5 });
+    const a = createWebSocketAdapter({ url: 'wss://x/sync', room: 'r', WebSocket: FakeWS, reconnectMs: 5 });
     a.connect({ onStatus: s => statuses.push(s) });
     a.identify({ userId: 'u1', name: 'Ana' });
     FakeWS.instances[0]._open();

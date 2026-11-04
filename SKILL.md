@@ -104,7 +104,7 @@ connection. Turn it on above the injected block:
 
 ```js
 window.SM_ANNOTATE_SYNC = {
-  url:  (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/sync',
+  url:  location.protocol.replace('http', 'ws') + '//' + location.host + '/sync',
   room: 'q4-dashboard-review',   // everyone in the same room sees the same threads
 };
 ```

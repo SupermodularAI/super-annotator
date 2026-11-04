@@ -14,7 +14,7 @@
  *                               `=annotate-off` turns it off)
  *   window.SM_ANNOTATE_SYNC  : opt-in multiplayer. Omit it and the overlay is
  *                               single-player with no network, exactly as
- *                               before. Set { url: 'ws://host/sync', room }
+ *                               before. Set { url: 'wss://host/sync', room }
  *                               for the bundled relay (relay/server.js), or
  *                               { adapter, room } for any custom transport
  *                               (see "Sync adapter contract" in SKILL.md).

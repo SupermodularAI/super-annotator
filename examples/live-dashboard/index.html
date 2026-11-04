@@ -256,11 +256,11 @@
 </script>
 
 <script>
-  /* Multiplayer annotate: live comments through the local relay. */
+  /* Multiplayer annotate: live comments through the relay (wss on https, ws on a local http relay). */
   window.SM_ARTEFACT_NAME = 'Halyard revenue dashboard';
   if (location.host) {
     window.SM_ANNOTATE_SYNC = {
-      url: (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/sync',
+      url: location.protocol.replace('http', 'ws') + '//' + location.host + '/sync',
       // ?room=<name> opens a separate, empty room (handy for testing).
       room: new URLSearchParams(location.search).get('room') || 'halyard-revenue-dashboard',
     };
