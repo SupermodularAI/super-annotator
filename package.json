@@ -1,32 +1,41 @@
 {
   "name": "super-annotator",
-  "version": "1.0.0",
-  "description": "Click-to-annotate overlay for any HTML page — leave inline notes, export them as markdown, paste straight into your AI's next prompt.",
+  "version": "2.0.0",
+  "description": "Click-to-annotate overlay for any HTML page. Leave inline notes alone or live with your team, then export them as markdown for your AI's next prompt.",
   "bin": {
     "super-annotator": "./inject-annotate.js"
   },
   "files": [
     "annotator.js",
     "inject-annotate.js",
+    "relay/",
+    "examples/",
     "SKILL.md",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "scripts": {
-    "test": "node --test annotator.test.js",
-    "test:e2e": "npx playwright test annotator.spec.js"
+    "test": "node --test annotator.test.js relay/relay.test.js",
+    "test:e2e": "npx playwright test",
+    "demo": "node relay/server.js --port ${PORT:-4620} --root examples/live-dashboard --seed examples/live-dashboard/seed.json --data .relay-data/live-dashboard.json"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"
   },
   "keywords": [
+    "ai",
     "annotation",
+    "claude-code",
+    "cloudflare-workers",
+    "collaboration",
     "feedback",
     "html",
-    "review",
+    "multiplayer",
     "prototype",
-    "claude-code",
-    "ai"
+    "realtime",
+    "review",
+    "websocket"
   ],
   "license": "Apache-2.0",
   "author": "Supermodular.ai (https://supermodular.ai)",
@@ -34,5 +43,8 @@
     "type": "git",
     "url": "https://github.com/supermodularai/super-annotator"
   },
-  "homepage": "https://github.com/supermodularai/super-annotator"
+  "homepage": "https://github.com/supermodularai/super-annotator",
+  "engines": {
+    "node": ">=22"
+  }
 }

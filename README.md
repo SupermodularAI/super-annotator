@@ -1,6 +1,6 @@
 # Super Annotator
 
-**Click anything. Leave a note. Export straight into your AI's next prompt.**
+**Click anything. Leave a note, alone or live with your team. Export straight into your AI's next prompt.**
 
 A single dependency-free JavaScript file that drops a click-to-annotate overlay
 onto any HTML page. Reviewers click an element, type a note, and it appears as
@@ -15,6 +15,35 @@ one-pagers, reports, marketing sites, and AI-generated pages.**
 ![Super Annotator demo](./media/marketing.gif)
 
 **[▶ Watch the 30-second demo](./media/marketing.mp4)** · **[▶ Watch the install + reprompt tutorial](./media/tutorial.mp4)**
+
+## Live, with your team
+
+Turn on multiplayer and everyone on the page comments together: new threads,
+replies and resolves land for everyone in a fraction of a second. People add a
+name, nothing else. On a phone it switches to pins that open the whole thread.
+
+![Live multiplayer annotation](./media/live.gif)
+
+**[▶ Watch the 90-second live demo](./media/live.mp4)** · **[Try it with a friend](https://annotate-live.supermodular.workers.dev)** (open it on your laptop and your phone)
+
+It is opt-in. Without a sync config the overlay is exactly the single-player
+tool below: no network calls, notes in your own browser.
+
+```bash
+# inject with live comments through a relay
+node inject-annotate.js review.html --sync=wss://your-relay.example.com/sync --room=q4-review
+
+# or run everything locally: relay + a demo page at http://localhost:4620
+npm run demo
+```
+
+The relay comes in two flavours that share the same room rules: a
+zero-dependency Node server (`relay/server.js`) and a Cloudflare Worker with one
+Durable Object per room (`relay/cloudflare/`, fits the free plan). We
+stress-tested the hosted one with 50 people commenting at once: everyone joined
+in under 1.5s and comments reached the room in about 140ms (p50). See
+[SKILL.md](./SKILL.md#multiplayer-opt-in-live-comments) for the protocol, limits
+and moderation.
 
 ## Install
 
@@ -55,6 +84,8 @@ node inject-annotate.js path/to/folder/ --recursive
 | `--name=<string>` | Display name shown in the exported markdown |
 | `--reviewer=<string>` | Pre-fills the reviewer name field |
 | `--plugin` | Ships the overlay dormant — no bubble, no hint — until a reviewer appends `?=annotate` to the URL |
+| `--sync=<ws(s)://…/sync>` | Live multiplayer through a relay |
+| `--room=<string>` | Who shares comments (defaults to the file name) |
 | `--recursive` | Scan subdirectories, not just the top level |
 
 Re-running the command on an already-annotated file refreshes it in place
@@ -81,7 +112,7 @@ the AI is looking at the same thing you were.
 
 ## Requirements
 
-Just Node.js for the CLI (any reasonably recent version). The overlay itself
+Just Node.js for the CLI (any reasonably recent version; Node 22+ for the relay). The overlay itself
 (`annotator.js`) is pure vanilla JS — no dependencies, no build step, works in
 any browser.
 
@@ -89,7 +120,7 @@ any browser.
 
 ```bash
 npm test           # unit tests
-npm run test:e2e   # Playwright end-to-end tests
+npm run test:e2e   # Playwright end-to-end tests: desktop, phone and live sync
 ```
 
 ## Contributing

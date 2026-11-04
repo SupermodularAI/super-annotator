@@ -1,0 +1,208 @@
+{
+  "rooms": {
+    "halyard-revenue-dashboard": [
+      {
+        "id": "seed-1",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#range-filter",
+        "anchor": {
+          "selector": "#range-filter",
+          "tagName": "div",
+          "text": ""
+        },
+        "structuralPath": "#range-filter",
+        "tag": "div",
+        "textSnippet": "30 days Quarter 12 months",
+        "author": "Lena Fischer",
+        "authorId": "seed-lena",
+        "comment": "Default this to Quarter for the Monday review. Twelve months hides what changed last week.",
+        "minutesAgo": 410,
+        "replies": []
+      },
+      {
+        "id": "seed-2",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#kpi-mrr",
+        "anchor": {
+          "selector": "#kpi-mrr",
+          "tagName": "article",
+          "text": ""
+        },
+        "structuralPath": "#kpi-mrr",
+        "tag": "article",
+        "textSnippet": "Monthly recurring revenue €184.3k",
+        "author": "Clara Hoffmann",
+        "authorId": "seed-clara",
+        "comment": "Is this MRR net of the annual prepay discount? Finance reports €179.8k for November.",
+        "minutesAgo": 190,
+        "replies": [
+          {
+            "id": "seed-2-r0",
+            "author": "Ravi Menon",
+            "authorId": "seed-ravi",
+            "comment": "It is gross. The discount is applied at invoice time, so it never reaches this table. I can switch the tile to net.",
+            "minutesAgo": 150
+          },
+          {
+            "id": "seed-2-r1",
+            "author": "Clara Hoffmann",
+            "authorId": "seed-clara",
+            "comment": "Net, please. The board deck and this tile have to match.",
+            "minutesAgo": 122
+          }
+        ]
+      },
+      {
+        "id": "seed-3",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#kpi-accounts",
+        "anchor": {
+          "selector": "#kpi-accounts",
+          "tagName": "article",
+          "text": ""
+        },
+        "structuralPath": "#kpi-accounts",
+        "tag": "article",
+        "textSnippet": "Active accounts 2,418",
+        "author": "Tomás Reis",
+        "authorId": "seed-tomas",
+        "comment": "Does active mean logged in this month, or paying? Sales counts paying accounts only.",
+        "minutesAgo": 300,
+        "replies": [
+          {
+            "id": "seed-3-r0",
+            "author": "Sofia Lindqvist",
+            "authorId": "seed-sofia",
+            "comment": "Paying, with at least one seat used in the last 30 days. Adding that as a tooltip.",
+            "minutesAgo": 276
+          }
+        ]
+      },
+      {
+        "id": "seed-4",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#kpi-churn",
+        "anchor": {
+          "selector": "#kpi-churn",
+          "tagName": "article",
+          "text": ""
+        },
+        "structuralPath": "#kpi-churn",
+        "tag": "article",
+        "textSnippet": "Logo churn 1.8%",
+        "author": "Daniel Okafor",
+        "authorId": "seed-daniel",
+        "comment": "Churn dropped after onboarding calls moved to week one. Worth a line on this tile.",
+        "minutesAgo": 2900,
+        "replies": [
+          {
+            "id": "seed-4-r0",
+            "author": "Sofia Lindqvist",
+            "authorId": "seed-sofia",
+            "comment": "Covered in the release notes instead. Tiles stay numbers only.",
+            "minutesAgo": 2860
+          }
+        ],
+        "resolved": true,
+        "resolvedBy": "Sofia Lindqvist",
+        "resolvedMinutesAgo": 2850
+      },
+      {
+        "id": "seed-5",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#chart-mrr",
+        "anchor": {
+          "selector": "#chart-mrr",
+          "tagName": "article",
+          "text": ""
+        },
+        "structuralPath": "#chart-mrr",
+        "tag": "article",
+        "textSnippet": "MRR, last 12 months",
+        "author": "Inês Carvalho",
+        "authorId": "seed-ines",
+        "comment": "The August dip reads like a data bug. Add a marker for the pricing migration.",
+        "minutesAgo": 75,
+        "replies": [
+          {
+            "id": "seed-5-r0",
+            "author": "Joaquim Prates",
+            "authorId": "seed-joaquim",
+            "comment": "It was the pricing migration: 41 accounts moved to annual billing that month. Agree on the marker.",
+            "minutesAgo": 61
+          }
+        ]
+      },
+      {
+        "id": "seed-6",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#chart-channels",
+        "anchor": {
+          "selector": "#chart-channels",
+          "tagName": "article",
+          "text": ""
+        },
+        "structuralPath": "#chart-channels",
+        "tag": "article",
+        "textSnippet": "New accounts by channel",
+        "author": "Aiko Tanaka",
+        "authorId": "seed-aiko",
+        "comment": "Partner is 296 against Organic at 312. Highlighting only Organic undersells the partner program.",
+        "minutesAgo": 44,
+        "replies": []
+      },
+      {
+        "id": "seed-7",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#activity-table",
+        "anchor": {
+          "selector": "#activity-table",
+          "tagName": "section",
+          "text": ""
+        },
+        "structuralPath": "#activity-table",
+        "tag": "section",
+        "textSnippet": "Recent account activity",
+        "author": "Sofia Lindqvist",
+        "authorId": "seed-sofia",
+        "comment": "Sort by MRR change by default. The newest event is rarely the one that matters.",
+        "minutesAgo": 22,
+        "replies": [
+          {
+            "id": "seed-7-r0",
+            "author": "Ravi Menon",
+            "authorId": "seed-ravi",
+            "comment": "Simple change. Value first, newest as the tiebreaker.",
+            "minutesAgo": 13
+          }
+        ]
+      },
+      {
+        "id": "seed-8",
+        "page": "index.html",
+        "pageTitle": "Halyard",
+        "selector": "#row-ac-2291",
+        "anchor": {
+          "selector": "#row-ac-2291",
+          "tagName": "tr",
+          "text": ""
+        },
+        "structuralPath": "#row-ac-2291",
+        "tag": "tr",
+        "textSnippet": "Harbor Lane Downgraded Scale to Team",
+        "author": "Joaquim Prates",
+        "authorId": "seed-joaquim",
+        "comment": "Harbor Lane moved from Scale to Team. I have a call with their ops lead on Thursday.",
+        "minutesAgo": 9,
+        "replies": []
+      }
+    ]
+  }
+}
